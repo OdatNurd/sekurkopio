@@ -1,0 +1,32 @@
+{
+  "name": "sekurkopio",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Backup Cloudflare databases to R2. Restore them too, why not?",
+  "type": "module",
+  "repository": "https://github.com/OdatNurd/sekurkopio",
+  "author": {
+    "name": "OdatNurd",
+    "email": "odatnurd@gmail.com",
+    "url": "https://odatnurd.net"
+  },
+  "scripts": {
+    "server:run": "wrangler dev --persist-to ~/.config/.wrangler/state/",
+    "server:deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^3.63.1"
+  },
+  "dependencies": {
+    "hono": "^3.12.6",
+    "streaming-tarball": "^1.0.3",
+    "strftime": "^0.10.3",
+    "zod": "^3.22.4"
+  },
+  "imports": {
+    "#db/*": "./src/db/*.js",
+    "#requests/*": "./src/requests/*.js",
+    "#schema/*": "./src/schema/*.js",
+    "#commit": "./commitReference.js"
+  }
+}

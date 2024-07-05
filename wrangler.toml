@@ -1,0 +1,55 @@
+name = "sekurkopio"
+main = "src/sekurkopio.js"
+compatibility_date = "2023-12-01"
+
+# Dev versions should have no route; production versions go directly to our
+# customized route instead.
+#
+# Here the zone_id comes from the API section of the overview page of a site in
+# the CF Dashboard.
+workers_dev = false
+routes = [
+    { pattern = "sekurkopio.odatnurd.net/*", zone_id="228f86abc5bc8b04719dc4671eb09dc0" }
+]
+
+
+################################################################################
+# B I N D I N G S
+################################################################################
+
+# Bind our data buckets; the name is specified by you when you create the bucket
+# initially.
+r2_buckets = [
+    { binding = "R2", bucket_name = "sekurkopio" }
+]
+
+# Bind our database; the name and ID come from the D1 page and are visible when
+# you create DB or go back to look at one.
+#
+# Sekurkopio requires that the binding name match the database name so that it
+# can be dynamically accessed. Additionally, all databases that require backup
+# or restore actions should be bound here.
+d1_databases = [
+    { binding = "luddatumbazo-db", database_name = "luddatumbazo-db", database_id = "12c1daa5-0e78-4a83-ae4e-6785dd098005" }
+]
+
+
+################################################################################
+# D E V   S E R V E R   S E T T I N G S
+################################################################################
+
+[dev]
+ip = "localhost"
+port = 9999
+
+
+################################################################################
+# P R E B U I L D
+################################################################################
+
+[build]
+
+# When starting the dev mode server OR when doing a deployment, first execute
+# this script, which will generate a file that contains the current commit hash
+# for use in the worker code.
+command = "node tools/getCurrentCommit.js"

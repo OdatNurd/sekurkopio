@@ -1,0 +1,9 @@
+*.sublime-*
+
+.env
+.wrangler/
+.dev.vars
+node_modules/
+
+# The file that contains the released git hash of the release.
+commitReference.js
