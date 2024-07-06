@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 
 import { server_info } from '#requests/server_info/index';
+import { backup } from '#requests/backup/index';
 
 
 /******************************************************************************/
@@ -23,6 +24,16 @@ const APIV1 = '/api/v1'
  ******************************************************************************/
 
 app.route(`${APIV1}/server_info`, server_info);
+
+
+/*******************************************************************************
+ * Backup Routes
+ *******************************************************************************
+ * Items in this section have routes that mount on the root of the router and
+ * are used to create and restore database backup dumps.
+ ******************************************************************************/
+
+app.route(`${APIV1}/backup`, backup);
 
 
 /******************************************************************************/
