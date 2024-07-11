@@ -29,12 +29,10 @@ export async function r2StoreJson(ctx, key, obj) {
 /******************************************************************************/
 
 
-/* Fetch from the database a JSON object based on the content of the provided
- * key; the return value is the JSON object on success, or null on failure.
+/* Given an R2 asset key, look for an object in the bucket that has that key,
+ * grab it and convert it's content into a JSON object and return it.
  *
- * null is an indication that the key does not exist; the function will throw
- * an exception if the content of the file at the given key is not valid JSON
- * data. */
+ * If there is no such key, null is returned instead. */
 export async function r2FetchJSON(ctx, key) {
   console.log(`fetching JSON from R2 key: ${key}`);
 
@@ -43,6 +41,30 @@ export async function r2FetchJSON(ctx, key) {
   const r2Object = await ctx.env.R2.get(key);
   if (r2Object !== null) {
     return await r2Object.json();
+  }
+
+  // Key was not found.
+  console.log(`R2 key not found: ${key}`);
+  return null;
+}
+
+
+/******************************************************************************/
+
+
+/* Given an R2 asset key, look for an object in the bucket that has that key,
+ * grab it and return it back. This will return the raw object; it is up to the
+ * caller to do something with the body stream.
+ *
+ * If there is no such key, null is returned instead. */
+export async function r2RawGet(ctx, key) {
+  console.log(`fetching raw object from R2 key: ${key}`);
+
+  // Grab the object from the bucket and, if found, load it into JSON data and
+  // return the resulting object back.
+  const r2Object = await ctx.env.R2.get(key);
+  if (r2Object !== null) {
+    return r2Object;
   }
 
   // Key was not found.

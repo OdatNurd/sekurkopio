@@ -43,7 +43,7 @@ export const BackupCreateSchema = z.object({
 export const BackupRestoreSchema = z.object({
   fromDatabase: z.string().regex(/^[\w-]+$/),
   toDatabase: z.string().regex(/^[\w-]+$/),
-  name: z.string().regex(/^[\w-]+$/),
+  name: z.string().regex(/^[\w-.]+$/),
 });
 
 
