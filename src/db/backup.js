@@ -350,3 +350,72 @@ export async function dbBkpGenerateMetaInfo(db) {
 
 
 /******************************************************************************/
+
+
+/* Fetch from the database a complete list of all of the known backups.
+ *
+ * The return value is a (potentially empty) list of objects that indicate what
+ * database the backup is for and what the backup name is.
+ *
+ * Backup names will have a `.tar` or `.tgz` extension if they're tar backups;
+ * otherwise they are regular directory based file backups. */
+export async function dbBkpGetList(db) {
+  // Grab the list of backups from the database.
+  const lookup = await db.prepare(`
+    SELECT id, dbName, backupName from BackupList
+  `).all();
+
+  // Pull the data out of the query and return it
+  return getDBResult('dbBkpGetList', 'get_backup_list', lookup);
+}
+
+
+/******************************************************************************/
+
+
+/* Insert a record for a newly created backup into the tracking database.
+ *
+ * This will create a new record tracking that a backup with the given name
+ * was created/updated for the provided database.
+ *
+ * The record for the backup is returned back; if a backup by this name for this
+ * database already existed, then the existing record will be returned back
+ * instead of doing an insertion, since any such operation would overwrite all
+ * of the files for that backup anyway. */
+export async function dbBkpInsert(db, fromDatabase, name) {
+  // Check to see if there is an existing backup with this name already exists.
+  const existingQuery = await db.prepare(`
+    SELECT id, dbName, backupName
+      FROM BackupList
+     WHERE dbName = ?1 AND backupName = ?2
+  `).bind(fromDatabase, name).all();
+  const existing = getDBResult('dbBkpInsert', 'check_existing', existingQuery);
+
+  // If there is a record of this in the database, we don't need to do anything
+  // and can just go ahead and return the value directly.
+  if (existing.length !== 0) {
+    console.log(`insert of new backup for ${fromDatabase}:${name} overwrote an existing backup`);
+    return existing[0];
+  }
+
+  // There is no such record, so insert a new one into the database.
+  const result = await db.prepare(`
+    INSERT INTO BackupList
+      (dbName, backupName)
+    VALUES (?1, ?2);
+  `).bind(fromDatabase, name).all();
+
+  // Display the results of the creation
+  getDBResult('dbBkpInsert', 'insert_backup', result);
+
+  // Return the new record back; all data here is known except for the ID, which
+  // comes from the insert.
+  return {
+    id: result.meta.last_row_id,
+    dbName: fromDatabase,
+    backupName: name
+  }
+}
+
+
+/******************************************************************************/

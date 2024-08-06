@@ -3,7 +3,7 @@
 
 import { success, fail } from '#requests/common';
 
-import { dbBkpGenerateMetaInfo, dbBkpGetTableContents } from "#db/backup";
+import { dbBkpGenerateMetaInfo, dbBkpGetTableContents, dbBkpInsert } from "#db/backup";
 
 import { r2StoreJson } from '#r2';
 
@@ -64,6 +64,11 @@ export async function reqCreateDump(ctx) {
     await r2StoreJson(ctx, `${keyPrefix}/${tableName}.json`, data);
   }
 
+  // If we get here, the backup succeeded, so make a record of it in the
+  // database.
+  await dbBkpInsert(ctx.env.sekurkopio, fromDatabase, name);
+
+  // All Good.
   return success(ctx, `created a dump of ${metadata.loadOrder.length} tables`, result);
 }
 

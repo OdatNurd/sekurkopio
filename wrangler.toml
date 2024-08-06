@@ -30,7 +30,8 @@ r2_buckets = [
 # can be dynamically accessed. Additionally, all databases that require backup
 # or restore actions should be bound here.
 d1_databases = [
-    { binding = "luddatumbazo", database_name = "luddatumbazo",    database_id = "8b684b74-2299-4276-a0b2-f6f6d3a65526" }
+    { binding = "sekurkopio",   database_name = "sekurkopio",   database_id = "6bdcf067-eed2-4878-8945-83b173110cb6" },
+    { binding = "luddatumbazo", database_name = "luddatumbazo", database_id = "8b684b74-2299-4276-a0b2-f6f6d3a65526" }
 ]
 
 
